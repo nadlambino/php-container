@@ -1,0 +1,21 @@
+{
+    "name": "inspira/container",
+    "description": "PHP container component.",
+    "type": "library",
+    "require": {
+        "psr/container": "2.0.x-dev"
+    },
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Inspira\\Container\\": "."
+        }
+    },
+    "authors": [
+        {
+            "name": "Ronald Lambino",
+            "email": "50892397+nadlambino@users.noreply.github.com"
+        }
+    ],
+    "minimum-stability": "dev"
+}
