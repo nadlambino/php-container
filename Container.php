@@ -25,6 +25,13 @@ use Throwable;
 class Container implements ContainerInterface
 {
 	/**
+	 * Container instance
+	 *
+	 * @var Container $instance
+	 */
+	private static Container $instance;
+
+	/**
 	 * An array of abstract:concrete bindings
 	 *
 	 * @var array{concrete: string, singleton: bool} $bindings
@@ -37,6 +44,32 @@ class Container implements ContainerInterface
 	 * @var array<string, mixed> $resolved
 	 */
 	private array $resolved = [];
+
+	public function __construct()
+	{
+		self::setInstance($this);
+	}
+
+	/**
+	 * Get the current container instance or create a new one
+	 *
+	 * @return static
+	 */
+	public static function getInstance(): self
+	{
+		return self::$instance ??= new self();
+	}
+
+	/**
+	 * Set container instance
+	 *
+	 * @param Container $container
+	 * @return void
+	 */
+	public static function setInstance(Container $container): void
+	{
+		self::$instance = $container;
+	}
 
 	/**
 	 * Binds an abstract class|interface to a concrete class
