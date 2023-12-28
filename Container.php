@@ -15,6 +15,7 @@ use ReflectionClass;
 use ReflectionException;
 use ReflectionFunction;
 use ReflectionMethod;
+use ReflectionParameter;
 use ReflectionType;
 use Throwable;
 
@@ -394,15 +395,15 @@ class Container implements ContainerInterface
 			$type = $param->getType();
 			$parameter = $param->getName();
 
-			if ($param->isDefaultValueAvailable()) {
-				$dependencies[] = $param->getDefaultValue();
-				continue;
-			}
-
-			$this->validateType($type, $parameter, $service->getName());
+			$this->validateType($type, $parameter, $service->getName(), $param);
 
 			$name = $type->getName();
 			$binding = $this->getBindings($name);
+
+			if (!$this->has($name) && $param->isDefaultValueAvailable()) {
+				$dependencies[] = $param->getDefaultValue();
+				continue;
+			}
 
 			// Resolve closure binding
 			if (is_array($binding) && $binding['concrete'] instanceof Closure) {
@@ -446,11 +447,12 @@ class Container implements ContainerInterface
 	 * @param ReflectionType|null $type
 	 * @param string $parameter
 	 * @param string $serviceName
+	 * @param ReflectionParameter $param
 	 * @return void
 	 * @throws UnresolvableBuiltInTypeException
 	 * @throws UnresolvableMissingTypeException
 	 */
-	private function validateType(null|ReflectionType $type, string $parameter, string $serviceName): void
+	private function validateType(null|ReflectionType $type, string $parameter, string $serviceName, ReflectionParameter $param): void
 	{
 		if ($type instanceof ReflectionType && method_exists($type, 'isBuiltin') && $type->isBuiltin()) {
 			throw new UnresolvableBuiltInTypeException(
@@ -458,7 +460,7 @@ class Container implements ContainerInterface
 			);
 		}
 
-		if ($type === null) {
+		if ($type === null && !$param->hasType()) {
 			throw new UnresolvableMissingTypeException(
 				sprintf('Unable to resolve missing type of `%s` in `%s`', $parameter, $serviceName)
 			);
