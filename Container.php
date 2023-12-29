@@ -428,15 +428,15 @@ class Container implements ContainerInterface
 			$type = $param->getType();
 			$parameter = $param->getName();
 
+			if ($param->isDefaultValueAvailable()) {
+				$dependencies[] = $param->getDefaultValue();
+				continue;
+			}
+
 			$this->validateType($type, $parameter, $service->getName(), $param);
 
 			$name = $type->getName();
 			$binding = $this->getBindings($name);
-
-			if (!$this->has($name) && $param->isDefaultValueAvailable()) {
-				$dependencies[] = $param->getDefaultValue();
-				continue;
-			}
 
 			// Resolve closure binding
 			if (is_array($binding) && $binding['concrete'] instanceof Closure) {
