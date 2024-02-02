@@ -3,7 +3,7 @@
     "description": "PHP container component.",
     "type": "library",
     "require": {
-        "php": "8.3",
+        "php": "^8.3",
         "psr/container": "2.0.x-dev"
     },
     "license": "MIT",
